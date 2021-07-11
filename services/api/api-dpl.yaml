@@ -1,0 +1,158 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-kube-tr-api
+spec:
+  selector:
+      app: dpl-kube-tr-api
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: LoadBalancer   
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-kube-tr-api
+  labels:
+    app: dpl-kube-tr-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dpl-kube-tr-api
+  template:
+    metadata:
+      labels:
+        app: dpl-kube-tr-api
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: dpl-kube-tr-api
+        image: kube-tr/api:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+          name: http-port
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
+          requests:
+            cpu: "200m"
+            memory: "200Mi"
+        securityContext:
+          capabilities:
+            add:
+              - IPC_LOCK
+        #readinessProbe:
+        #  httpGet:
+        #    path: /status
+        #    port: 8000
+        #    scheme: HTTPS
+        #  initialDelaySeconds: 3
+        #  periodSeconds: 10       
+        env:
+          - name: POD_UID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.uid
+                
+          - name: TZ
+            value: "America/Sao_Paulo" 
+
+          # Uvicorn parameters       
+          - name: LOG_LEVEL
+            value: "debug"          
+          - name: PORT
+            value: "8000"
+                   
+
+          # Enable SSL (HTTPS) for uvicorn
+          # cert.pem and cert.key must be on a secret and will be transfered to pod as /etc/ssl-secrets/tls.crt and /etc/ssl-secrets/tls.key respectively
+          - name: SSL_CERTIFICATE
+            value: "/etc/ssl-secrets/tls.crt"
+          - name: SSL_KEYFILE
+            value: "/etc/ssl-secrets/tls.key"                        
+            
+          # Set Kafka 
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: "kafka-stset-0.kafka-stset.kube-tr.svc.cluster.local:9092,kafka-stset-1.kafka-stset.kube-tr.svc.cluster.local:9092"
+          - name: KAFKA_TOPIC
+            value: "default_topic"
+          - name: KAFKA_TOPIC_KEY
+            value: "" 
+
+          ## Postgres connection
+          #- name: POSTGRES_HOSTNAME
+          #  value: "svc-postgres:5432"  
+          #- name: POSTGRES_DATABASE
+          #  value: leia
+          #- name: POSTGRES_USERNAME
+          #  value: leia_user          
+          #- name: POSTGRES_PASSWORD
+          #  valueFrom:
+          #     secretKeyRef:
+          #       name: postgres-admin-secret
+          #       key: password                  
+          #- name: POSTGRES_PASSWORD
+          #  valueFrom:
+          #    secretKeyRef:
+          #      name: postgres-admin-secret
+          #      key: password            
+        volumeMounts:
+          - name: api-tls-secrets
+            mountPath: "/etc/ssl-secrets"
+            readOnly: true            
+      volumes:
+        - name: api-tls-secrets
+          secret:
+            secretName: api-tls-secrets
+            defaultMode: 0400
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hscaler-kube-tr-receiver
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dpl-kube-tr-api
+  minReplicas: 1
+  maxReplicas: 15
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+#  - type: Resource
+#    resource:
+#      name: memory
+#      target:
+#        type: AverageValue
+#        averageValue: 100Mi
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 5
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 5
+      - type: Pods
+        value: 5
+        periodSeconds: 5        
+    scaleUp:
+      stabilizationWindowSeconds: 10
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 5
+      - type: Pods
+        value: 6
+        periodSeconds: 5
+      selectPolicy: Max
+        
