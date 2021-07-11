@@ -36,8 +36,8 @@ spec:
           image: postgres:10
           resources:
            limits:
-             cpu: "1"
-             memory: "2Gi"
+             cpu: "500m"
+             memory: "1Gi"
            requests:
              cpu: "500m"
              memory: "1Gi"
@@ -45,9 +45,12 @@ spec:
            - containerPort: 5432
           env:
            - name: POSTGRES_DB
-             value: kube-tr
+             value: kube-db
            - name: POSTGRES_USER
-             value: kube-tr_user          
+             valueFrom:
+                secretKeyRef:
+                  name: postgres-admin-secret
+                  key: username          
            - name: POSTGRES_PASSWORD
              valueFrom:
                 secretKeyRef:
@@ -57,16 +60,12 @@ spec:
              value: /var/lib/postgresql/data/pgdata
           readinessProbe:
             exec:
-              command: ["/bin/bash", "-c", "psql -U kube-tr_user kube-tr -c 'CREATE TABLE IF NOT EXISTS kube-tr_records (kube-tr_id VARCHAR primary key, status VARCHAR, json JSON,upsert_timestamp VARCHAR);'" ]
+              command: ["/bin/bash", "-c", "psql -U ${POSTGRES_USER} ${POSTGRES_DB} -c 'CREATE TABLE IF NOT EXISTS kube_tr_records (kube_tr_id VARCHAR primary key, upsert_timestamp VARCHAR);'" ]
             initialDelaySeconds: 30
             periodSeconds: 2
             timeoutSeconds: 1
             successThreshold: 3
-            failureThreshold: 10              
-          #lifecycle:
-          #  postStart:
-          #    exec:
-          #      command: ["/bin/bash", "-c", "psql -U kube-tr_user kube-tr -c 'CREATE TABLE IF NOT EXISTS kube-tr_records (kube-tr_id VARCHAR primary key, status VARCHAR, json JSON,upsert_timestamp VARCHAR);'" ]             
+            failureThreshold: 10           
     #      volumeMounts:
     #       - mountPath: /var/lib/postgresql/data
     #         name: postgredb
