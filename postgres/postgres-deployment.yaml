@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: postgres
+spec:
+ strategy:
+   rollingUpdate:
+     maxSurge: 1
+     maxUnavailable: 1
+   type: RollingUpdate
+ replicas: 1
+ selector:
+   matchLabels:
+     app: postgres
+ template:
+   metadata:
+     labels:
+       app: postgres
+   spec:
+     containers:
+        - name: postgres
+          image: postgres:10
+          resources:
+           limits:
+             cpu: "1"
+             memory: "2Gi"
+           requests:
+             cpu: "500m"
+             memory: "1Gi"
+          ports:
+           - containerPort: 5432
+          env:
+           - name: POSTGRES_DB
+             value: kube-tr
+           - name: POSTGRES_USER
+             value: kube-tr_user          
+           - name: POSTGRES_PASSWORD
+             valueFrom:
+                secretKeyRef:
+                  name: postgres-admin-secret
+                  key: password 
+           - name: PGDATA
+             value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["/bin/bash", "-c", "psql -U kube-tr_user kube-tr -c 'CREATE TABLE IF NOT EXISTS kube-tr_records (kube-tr_id VARCHAR primary key, status VARCHAR, json JSON,upsert_timestamp VARCHAR);'" ]
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            timeoutSeconds: 1
+            successThreshold: 3
+            failureThreshold: 10              
+          #lifecycle:
+          #  postStart:
+          #    exec:
+          #      command: ["/bin/bash", "-c", "psql -U kube-tr_user kube-tr -c 'CREATE TABLE IF NOT EXISTS kube-tr_records (kube-tr_id VARCHAR primary key, status VARCHAR, json JSON,upsert_timestamp VARCHAR);'" ]             
+    #      volumeMounts:
+    #       - mountPath: /var/lib/postgresql/data
+    #         name: postgredb
+    # volumes:
+    #   - name: postgredb
+    #     persistentVolumeClaim:
+    #       claimName: postgres-pvc

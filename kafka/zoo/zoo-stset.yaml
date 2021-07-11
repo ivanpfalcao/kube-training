@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-zoo-stset
+spec:
+  selector:
+    app: zoo-stset   
+  ports:
+    - name: zoo
+      protocol: TCP
+      port: 2181
+      targetPort: 2181
+    - name: zoo-service-1
+      protocol: TCP
+      port: 2888
+      targetPort: 2888
+    - name: zoo-service-2
+      protocol: TCP
+      port: 3888
+      targetPort: 3888          
+  type: LoadBalancer
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: zoo-stset
+spec:
+  selector:
+    app: zoo-stset   
+  clusterIP: None
+  ports:
+    - name: zoo
+      protocol: TCP
+      port: 2181
+      targetPort: 2181
+    - name: zoo-service-1
+      protocol: TCP
+      port: 2888
+      targetPort: 2888
+    - name: zoo-service-2
+      protocol: TCP
+      port: 3888
+      targetPort: 3888          
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zoo-stset
+  labels:
+    app: zoo-stset
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: zoo-stset
+  serviceName: "zoo-stset"      
+  template:
+    metadata:
+      labels:
+        app: zoo-stset
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: zoo-stset
+        image: kube-tr/zookeeper:3.7.0.0001
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 2181
+          name: zoo-port
+        - containerPort: 2888
+          name: zoo-service-1
+        - containerPort: 3888
+          name: zoo-service-2          
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+          requests:
+            cpu: "250m"
+            memory: "300Mi"
+        securityContext:
+          capabilities:
+            add:
+              - IPC_LOCK
+        env:   
+          - name: ZOO_LOG4J_PROP
+            value: INFO
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName           

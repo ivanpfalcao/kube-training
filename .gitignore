@@ -1,0 +1,8 @@
+.vscode
+__pycache__
+certificates/*.json
+*kafka*.tgz
+*zookeeper*.tar*
+*.pem
+*.key
+secrets/gcs_bucket/*.json
