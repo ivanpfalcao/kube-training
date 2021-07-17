@@ -61,7 +61,7 @@ async def api_tests(req_body: MyRequest, request: Request):
         message['api_pod_uid'] = api_pod_uid
         message['obs'] = req_body.obs
         message['request_ts'] = str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f"))
-
+        message['request_id'] = '{}_{}'.format(message['request_ts'], ''.join(random.choice(rand_format) for i in range(rand_len)))
         logger.debug("Value: {}".format(message))  
 
         producer = KafkaProducer(bootstrap_servers=kafka_bootstrap_servers)  
@@ -71,10 +71,7 @@ async def api_tests(req_body: MyRequest, request: Request):
     except Exception as e: 
         raise e      
 
-    return {"Status": "Success"}
-
-class LeiaIdsRequest(BaseModel):
-    leia_ids: List[str]
+    return {'Status': 'Success', 'request_id': message['request_id']}
 
 @app.get('/status')
 async def status():

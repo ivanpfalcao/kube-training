@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl-kafka-consumer
+  labels:
+    app: dpl-kafka-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dpl-kafka-consumer
+  template:
+    metadata:
+      labels:
+        app: dpl-kafka-consumer
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: dpl-kafka-consumer
+        image: kube-tr/kafka-consumer:1.0.0
+        imagePullPolicy: Never
+        resources:
+          limits:
+            cpu: "750m"
+            memory: "1Gi"
+          requests:
+            cpu: "250m"
+            memory: "300Mi"
+        securityContext:
+          capabilities:
+            add:
+              - IPC_LOCK
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP   
+
+          - name: TZ
+            value: "America/Sao_Paulo"   
+          
+          # Logging parameters
+          - name: ROOT_LOG_LEVEL
+            value: "INFO"                 
+          - name: LOG_LEVEL
+            value: "DEBUG"    
+            
+          # Set Kafka 
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: "kafka-stset-0.kafka-stset.kube-tr.svc.cluster.local:9092,kafka-stset-1.kafka-stset.kube-tr.svc.cluster.local:9092"
+          - name: KAFKA_GROUP_ID
+            value: "default-group"
+          - name: KAFKA_INPUT_TOPIC
+            value: "kafka-test-topic"
+          - name: KAFKA_INPUT_TOPIC_KEY
+            value: ""
+
+          # Postgres connection
+          - name: POSTGRES_DATABASE
+            value: "kube-db"            
+          - name: POSTGRES_HOSTNAME
+            value: "svc-postgres:5432"  
+          - name: POSTGRES_USERNAME
+            valueFrom:
+               secretKeyRef:
+                 name: postgres-admin-secret
+                 key: username                 
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+               secretKeyRef:
+                 name: postgres-admin-secret
+                 key: password                               

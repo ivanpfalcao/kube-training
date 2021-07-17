@@ -60,7 +60,7 @@ spec:
              value: /var/lib/postgresql/data/pgdata
           readinessProbe:
             exec:
-              command: ["/bin/bash", "-c", "psql -U ${POSTGRES_USER} ${POSTGRES_DB} -c 'CREATE TABLE IF NOT EXISTS kube_tr_records (kube_tr_id VARCHAR primary key, upsert_timestamp VARCHAR);'" ]
+              command: ["/bin/bash", "-c", "psql -U ${POSTGRES_USER} ${POSTGRES_DB} -c 'CREATE TABLE IF NOT EXISTS kube_tr_records (kube_tr_id VARCHAR primary key, upsert_timestamp VARCHAR, kube_record json);'" ]
             initialDelaySeconds: 30
             periodSeconds: 2
             timeoutSeconds: 1
