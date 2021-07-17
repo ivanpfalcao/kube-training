@@ -1,4 +1,4 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
-${BASEDIR}/../services/01-build-api-img.sh
+${BASEDIR}/../apis/02-deploy-api.sh

@@ -60,6 +60,7 @@ async def api_tests(req_body: MyRequest, request: Request):
         message['ticket_id'] = req_body.ticket_id
         message['api_pod_uid'] = api_pod_uid
         message['obs'] = req_body.obs
+        message['request_ts'] = str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f"))
 
         logger.debug("Value: {}".format(message))  
 
