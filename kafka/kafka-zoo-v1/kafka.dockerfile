@@ -26,9 +26,15 @@ ENV KAFKA_CONFIG_FILE="/kafka/kafka_${KAFKA_VERSION}/config/kafka_server.propert
     KAFKA_LOG_RENTENTION_HOURS="168" \
     KAFKA_LOG_SEG_BYTES="1073741824" \
     KAFKA_RET_CHECK_INTERVAL_MS="300000" \
-    ZOOKEEPER_CONNECTION="zoo-stset-0.zoo-stset.kube-tr.svc.cluster.local:2181,zoo-stset-2.zoo-stset.kube-tr.svc.cluster.local:2181" \
+    ZOOKEEPER_CONNECTION="leia-zoo-stset-0.leia-zoo-stset.leia.svc.cluster.local:2181,leia-zoo-stset-2.leia-zoo-stset.leia.svc.cluster.local:2181" \
     ZOO_CONN_TIMEOUT_MS="18000" \
-    KAFKA_GROUP_INIT_REBAL_DELAY="3"
+    KAFKA_GROUP_INIT_REBAL_DELAY="3" \
+    KAFKA_COMPRESSION_TYPE="gzip" \
+    KAFKA_LINGER_MS="0" \
+    KAFKA_BATCH_SIZE="1024" \
+    KAFKA_CLEANUP_POLICY="delete" \
+    KAFKA_RETENTION_MS="604800000"
+
 
 WORKDIR /kafka/kafka_${KAFKA_VERSION}
 
@@ -52,6 +58,11 @@ ENTRYPOINT echo "node.id=${HOSTNAME##*-}" > ${KAFKA_CONFIG_FILE} \
     && echo "zookeeper.connect=${ZOOKEEPER_CONNECTION}" >> ${KAFKA_CONFIG_FILE} \
     && echo "zookeeper.connection.timeout.ms=${ZOO_CONN_TIMEOUT_MS}" >> ${KAFKA_CONFIG_FILE} \
     && echo "group.initial.rebalance.delay.ms=${KAFKA_GROUP_INIT_REBAL_DELAY}" >> ${KAFKA_CONFIG_FILE} \
+    && echo "compression.type=${KAFKA_COMPRESSION_TYPE}" >> ${KAFKA_CONFIG_FILE} \
+    && echo "linger.ms=${KAFKA_LINGER_MS}" >> ${KAFKA_CONFIG_FILE} \
+    && echo "batch.size=${KAFKA_BATCH_SIZE}" >> ${KAFKA_CONFIG_FILE} \
+    && echo "retention.ms=${KAFKA_RETENTION_MS}" >> ${KAFKA_CONFIG_FILE} \
+    && echo "cleanup.policy=${KAFKA_CLEANUP_POLICY}" >> ${KAFKA_CONFIG_FILE} \
 #    && bash /kafka/kafka_${KAFKA_VERSION}/bin/kafka-storage.sh format -t ${KAFKA_FORMAT_UUID} -c ${KAFKA_CONFIG_FILE} \
     && /bin/bash /kafka/kafka_${KAFKA_VERSION}/bin/kafka-server-start.sh ${KAFKA_CONFIG_FILE} \
     && echo "Kafka started" \

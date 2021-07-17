@@ -80,7 +80,7 @@ spec:
           - name: KAFKA_BOOTSTRAP_SERVERS
             value: "kafka-stset-0.kafka-stset.kube-tr.svc.cluster.local:9092,kafka-stset-1.kafka-stset.kube-tr.svc.cluster.local:9092"
           - name: KAFKA_TOPIC
-            value: "default_topic"
+            value: "kafka-test-topic"
           - name: KAFKA_TOPIC_KEY
             value: "" 
 

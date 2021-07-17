@@ -6,3 +6,4 @@ certificates/*.json
 *.pem
 *.key
 secrets/gcs_bucket/*.json
+.empty

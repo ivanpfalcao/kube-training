@@ -16,5 +16,5 @@ ENV PORT=8000 \
 
 COPY ./ ./
 
-ENTRYPOINT /bin/bash ./start_webserver.sh
+ENTRYPOINT /bin/bash ./api/start_webserver.sh
  

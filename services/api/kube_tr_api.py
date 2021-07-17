@@ -50,8 +50,8 @@ class MyRequest(BaseModel):
     obs: Optional[str]
 
 
-@app.post('/base64')
-async def base64(req_body: MyRequest, request: Request):
+@app.post('/api-tests')
+async def api_tests(req_body: MyRequest, request: Request):
     try:
 
         logger.debug("Key: {}".format(kafka_key))    
