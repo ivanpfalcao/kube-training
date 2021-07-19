@@ -1,7 +1,11 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
-curl --insecure --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"ticket_id": "1234", "obs": "test"}' \
-  https://10.104.41.19:8000/api-tests
+
+for i in {0..10}; do
+  curl --insecure --header "Content-Type: application/json" \
+    --request POST \
+    --data "{\"ticket_id\": \"${i}\", \"obs\": \"test\"}" \
+    https://10.96.206.211:8000/api-tests
+  echo ""
+done
