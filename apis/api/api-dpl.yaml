@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: svc-kube-tr-api
+  name: svc-trn-kube-api
 spec:
   selector:
-      app: dpl-kube-tr-api
+      app: dpl-trn-kube-api
   ports:
     - protocol: TCP
       port: 8000
@@ -14,23 +14,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dpl-kube-tr-api
+  name: dpl-trn-kube-api
   labels:
-    app: dpl-kube-tr-api
+    app: dpl-trn-kube-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dpl-kube-tr-api
+      app: dpl-trn-kube-api
   template:
     metadata:
       labels:
-        app: dpl-kube-tr-api
+        app: dpl-trn-kube-api
     spec:
       terminationGracePeriodSeconds: 1
       containers:
-      - name: dpl-kube-tr-api
-        image: kube-tr/api:1.0.0
+      - name: dpl-trn-kube-api
+        image: trn-kube/api:1.0.0
         imagePullPolicy: Never
         ports:
         - containerPort: 8000
@@ -78,7 +78,7 @@ spec:
             
           # Set Kafka 
           - name: KAFKA_BOOTSTRAP_SERVERS
-            value: "kafka-stset-0.kafka-stset.kube-tr.svc.cluster.local:9092,kafka-stset-1.kafka-stset.kube-tr.svc.cluster.local:9092"
+            value: "kafka-stset-0.kafka-stset.trn-kube.svc.cluster.local:9092,kafka-stset-1.kafka-stset.trn-kube.svc.cluster.local:9092"
           - name: KAFKA_TOPIC
             value: "kafka-test-topic"
           - name: KAFKA_TOPIC_KEY
@@ -114,12 +114,12 @@ spec:
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: hscaler-kube-tr-receiver
+  name: hscaler-trn-kube-receiver
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: dpl-kube-tr-api
+    name: dpl-trn-kube-api
   minReplicas: 1
   maxReplicas: 15
   metrics:

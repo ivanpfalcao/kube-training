@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
 spec:
-  storageClassName: kube-tr-postgres-pv
+  storageClassName: trn-kube-postgres-pv
   accessModes:
     - ReadWriteOnce
   resources:
@@ -15,11 +15,11 @@ kind: PersistentVolume
 metadata:
   name: local-storage
 spec:
-  storageClassName: kube-tr-postgres-pv
+  storageClassName: trn-kube-postgres-pv
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/kube-tr/postgres/"
+    path: "/mnt/trn-kube/postgres/"
     type: DirectoryOrCreate

@@ -1,5 +1,5 @@
 
-FROM kube-tr/base-image:1.0.0
+FROM trn-kube/base-image:1.0.0
 
 WORKDIR /app
 

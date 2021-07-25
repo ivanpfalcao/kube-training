@@ -9,5 +9,5 @@ if [ ! -f ${BASEDIR}/apache-zookeeper-${ZOO_VERSION}-bin.tar.gz ]; then
     wget -P ${BASEDIR} https://archive.apache.org/dist/zookeeper/zookeeper-${ZOO_VERSION}/apache-zookeeper-${ZOO_VERSION}-bin.tar.gz
 fi
 
-docker build -t kube-tr/zookeeper:${TAG_VERSION} -f ${BASEDIR}/zookeeper.dockerfile  ${BASEDIR}
+docker build -t trn-kube/zookeeper:${TAG_VERSION} -f ${BASEDIR}/zookeeper.dockerfile  ${BASEDIR}
 

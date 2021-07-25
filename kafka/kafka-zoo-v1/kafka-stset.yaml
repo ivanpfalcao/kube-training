@@ -54,7 +54,7 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
       - name: kafka-stset
-        image: kube-tr/kafka:2.8.0.0001
+        image: trn-kube/kafka:2.8.0.0001
         imagePullPolicy: Never
         ports:
         - containerPort: 19092
@@ -74,7 +74,7 @@ spec:
               - IPC_LOCK
         env:   
           - name: ZOOKEEPER_CONNECTION
-            value: "zoo-stset-0.zoo-stset.kube-tr.svc.cluster.local:2181,zoo-stset-2.zoo-stset.kube-tr.svc.cluster.local:2181"        
+            value: "zoo-stset-0.zoo-stset.trn-kube.svc.cluster.local:2181,zoo-stset-2.zoo-stset.trn-kube.svc.cluster.local:2181"        
           - name: POD_IP
             valueFrom:
               fieldRef:

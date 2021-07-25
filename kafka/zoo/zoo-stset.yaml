@@ -62,7 +62,7 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
       - name: zoo-stset
-        image: kube-tr/zookeeper:3.7.0.0001
+        image: trn-kube/zookeeper:3.7.0.0001
         imagePullPolicy: Never
         ports:
         - containerPort: 2181

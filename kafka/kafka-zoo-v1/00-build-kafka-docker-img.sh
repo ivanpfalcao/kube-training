@@ -10,5 +10,5 @@ if [ ! -f ${BASEDIR}/kafka_${KAFKA_VERSION_F}.tgz ]; then
     wget -P ${BASEDIR} https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/kafka_${KAFKA_VERSION_F}.tgz
 fi
 
-docker build -t kube-tr/kafka:${TAG_VERSION} -f ${BASEDIR}/kafka.dockerfile  ${BASEDIR}
+docker build -t trn-kube/kafka:${TAG_VERSION} -f ${BASEDIR}/kafka.dockerfile  ${BASEDIR}
 

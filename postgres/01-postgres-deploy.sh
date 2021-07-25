@@ -1,7 +1,7 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
-KUBERNETES_NAMESPACE="kube-tr"
+KUBERNETES_NAMESPACE="trn-kube"
 
 POSTGRES_ADM_USER='kube-user'
 POSTGRES_ADM_PSWD='No,IAmYourFather'

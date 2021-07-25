@@ -2,7 +2,7 @@
 BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
 VERSION="1.0.0"
-KUBE_NAMESPACE="kube-tr"
+KUBE_NAMESPACE="trn-kube"
 
 kubectl create namespace "${KUBE_NAMESPACE}"
 

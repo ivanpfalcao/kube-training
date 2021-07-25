@@ -1,7 +1,7 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
-KUBE_NAMESPACE="kube-tr"
+KUBE_NAMESPACE="trn-kube"
 
 SSL_CERT_FILE="${BASEDIR}/cert.pem"
 SSL_KEY_FILE="${BASEDIR}/key.key"

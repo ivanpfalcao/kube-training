@@ -17,7 +17,7 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
       - name: dpl-kafka-consumer
-        image: kube-tr/kafka-consumer:1.0.0
+        image: trn-kube/kafka-consumer:1.0.0
         imagePullPolicy: Never
         resources:
           limits:
@@ -47,7 +47,7 @@ spec:
             
           # Set Kafka 
           - name: KAFKA_BOOTSTRAP_SERVERS
-            value: "kafka-stset-0.kafka-stset.kube-tr.svc.cluster.local:9092,kafka-stset-1.kafka-stset.kube-tr.svc.cluster.local:9092"
+            value: "kafka-stset-0.kafka-stset.trn-kube.svc.cluster.local:9092,kafka-stset-1.kafka-stset.trn-kube.svc.cluster.local:9092"
           - name: KAFKA_GROUP_ID
             value: "default-group"
           - name: KAFKA_INPUT_TOPIC

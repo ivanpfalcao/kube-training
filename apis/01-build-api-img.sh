@@ -3,4 +3,4 @@ BASEDIR="$( cd "$( dirname "${0}" )" && pwd )"
 
 VERSION="1.0.0"
 
-docker build -t kube-tr/api:${VERSION} -f ${BASEDIR}/dockerfiles/api.dockerfile  ${BASEDIR}
+docker build -t trn-kube/api:${VERSION} -f ${BASEDIR}/dockerfiles/api.dockerfile  ${BASEDIR}
